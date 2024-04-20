@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import { fetchGallery } from '../galleryApi';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
 import SearchBar from './SearchBar/SearchBar';
 import ShowGallery from './ImageGallery/ImageGallery';
@@ -18,12 +16,11 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [imgURL, setImgURL] = useState();
   const [modal, setModal] = useState(false);
-  const [limit, setLimit] = useState();
+  const [showBtn, setShowBtn] = useState(false);
 
   const handleSubmit = newQuery => {
     setQuery(newQuery);
     setImg([]);
-    setLimit(null);
     setPage(1);
     setError(false);
     setLoading(false);
@@ -45,18 +42,7 @@ export default function App() {
         setLoading(true);
 
         const data = await fetchGallery(query, page);
-        if (Math.ceil(data.total_pages / limit) === page) {
-          toast("We're sorry, but you've reached the end of search results.", {
-            position: 'top-right',
-            type: 'error',
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            draggable: true,
-            progress: undefined,
-          });
-          return;
-        }
+        setShowBtn(data.total_pages && data.total_pages !== page);
         setImg(prevGallery => {
           return [...prevGallery, ...data];
         });
@@ -67,7 +53,7 @@ export default function App() {
       }
     }
     getGallery();
-  }, [page, query, limit]);
+  }, [page, query]);
 
   const showModal = url => {
     setImgURL(url);
@@ -80,12 +66,11 @@ export default function App() {
 
   return (
     <>
-      <ToastContainer />
       <SearchBar onSubmit={handleSubmit} />
       {img.length > 0 && <ShowGallery images={img} onClick={showModal} />}
       {loading && <Loader />}
       {error && <ErrorMessage />}
-      {img.length > 0 && !loading && !limit && (
+      {img.length > 0 && !loading && showBtn && (
         <LoadMoreBtn addPage={handleLoadMore} />
       )}
       <ImageModule image={imgURL} state={modal} close={closeModal} />

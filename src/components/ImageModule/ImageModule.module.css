@@ -1,0 +1,7 @@
+.modal {
+  display: flex;
+  justify-content: center;
+  margin: 5px auto;
+  width: 400px;
+  outline: none;
+}

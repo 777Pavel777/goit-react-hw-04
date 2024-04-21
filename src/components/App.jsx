@@ -32,7 +32,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    if (!query) {
+    if (query === '') {
       return;
     }
 
@@ -44,7 +44,7 @@ export default function App() {
         const data = await fetchGallery(query, page);
         setShowBtn(data.total_pages && data.total_pages !== page);
         setImg(prevGallery => {
-          return [...prevGallery, ...data];
+          return [...prevGallery, ...data.results];
         });
       } catch (error) {
         setError(true);

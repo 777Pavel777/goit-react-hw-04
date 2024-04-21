@@ -15,5 +15,5 @@ export const fetchGallery = async (query, page) => {
     },
   });
 
-  return (await response).data.results;
+  return (await response).data;
 };
